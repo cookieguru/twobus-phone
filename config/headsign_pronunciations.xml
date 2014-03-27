@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file contains pronunciation overrides for trip headsigns.  This file is optional.
+Stop pronunciations are NOT case sensitive work best WITHOUT surrounding whitespace, 
+since these replacements may or may not have commas.  In some cases, it may be 
+necessary to add surrounding whitespace (e.g. so "Ave" to "Avenue" would not turn
+"Maven" to "Mavenue").
+-->
+<Pronunciations>
+	<Pronunciation for="SR-520">S R 5 20</Pronunciation>
+	<Pronunciation for="P&amp;R">Park &amp; Ride</Pronunciation>
+</Pronunciations>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file contains overrides for agency-related data returned by the One Bus Away API
+This file, and each XML element, is optional, allowing you to only specify the parameters you need
+
+The most useful element is likely the <Order/> parameter.  For example, if the API for your region
+returns three transit agencies, and you always want agency ID 12 to be read in the prompts before
+the other agencies, add <Order>1</Order> for <agency id="12">
+Additional agencies will be read in the order returned by the API.  Duplicates will cause only the
+last defined agency to take the given sort spot
+-->
+<Modifications>
+	<!-- The ID is the string returned by the agencies-with-coverage call -->
+	<agency id="">
+		<!-- Integer representing the order in which the agency will be read for each prompt -->
+		<Order></Order>
+
+		<!-- Name that will be spoken when referring to this agency -->
+		<!-- Useful if the API returns a long name and customers know the agency by an acronym -->
+		<Name></Name>
+
+		<!-- If true, this agency will be ignored completely -->
+		<Ignore></Ignore>
+
+		<!-- If false, don’t include this agency when searching by route -->
+		<SearchRoute></SearchRoute>
+
+		<!-- If false, don’t include this agency when searching by stop -->
+		<SearchStop></SearchStop>
+
+		<!-- If false, don’t include this agency when searching by vehicle -->
+		<SearchVehicle></SearchVehicle>
+	</agency>
+
+	<!-- Sample:
+	<agency id="1">
+		<Order>1</Order>
+		<Name>Metro</Name>
+	</agency>
+	-->
+</Modifications>

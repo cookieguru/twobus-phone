@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file contains pronunciation overrides for transit stops.  This file is optional.
+Stop pronunciations are NOT case sensitive work best WITH surrounding whitespace, 
+so strings within words do not get replaced (e.g. "Ave" to "Avenue" would turn "Maven" 
+to "Mavenue").
+These are loaded after the default substitutions are loaded, enabling you to override 
+the built-in pronunciations.
+-->
+<Pronunciations>
+	<Pronunciation for=" 2 AVE EXT "> 2nd Avenue Extension </Pronunciation>
+	<Pronunciation for=" Brougham "> Brome </Pronunciation>
+	<Pronunciation for=" bthl "> Bothell </Pronunciation>
+	<Pronunciation for=" cc "> Community College </Pronunciation>
+	<Pronunciation for=" Dravus "> Dray-vuhss </Pronunciation>
+	<Pronunciation for=" g washington "> george washington </Pronunciation>
+	<Pronunciation for=" hlnds "> highlands </Pronunciation>
+	<Pronunciation for=" Interurban "> Inter-Urban </Pronunciation>
+	<Pronunciation for=" iss "> issaquah </Pronunciation>
+	<Pronunciation for=" lkview "> lake-view </Pronunciation>
+	<Pronunciation for=" wash "> washington </Pronunciation>
+	<Pronunciation for=" TDS "> Tacoma Dome Station </Pronunciation>
+</Pronunciations>
