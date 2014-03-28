@@ -8,6 +8,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 	<?php
 	$_REQUEST['Digits'] = isset($_REQUEST['Digits']) ? (int)$_REQUEST['Digits'] : -1;
 
+	//2 goes to search by stop which is 6 in the main menu
+	if($_REQUEST['Digits'] == 2)
+		$_REQUEST['Digits'] = 6;
+
 	if(is_file("../{$_REQUEST['Digits']}/main.php")) {
 		$no_header = true;
 		include("../{$_REQUEST['Digits']}/main.php");
