@@ -35,11 +35,11 @@ out of credit in my Twilio Account.
 Requirements and Compatibility
 ------------------------------
 PHP 5.4 or greater is required due to the use of 
-([http://php.net/manual/en/migration54.new-features.php](short array syntax and array deferenencing)).
+[short array syntax and array deferenencing](http://php.net/manual/en/migration54.new-features.php).
 This project was developed on Windows with Apache but was also tested on Ubuntu
 with Apache.  There are no specific dependencies for Apache, and since PHP 5.4
 is required you could probably use 
-[http://www.php.net/manual/en/features.commandline.webserver.php](PHP's built-in webserver).
+[PHP's built-in webserver](http://www.php.net/manual/en/features.commandline.webserver.php).
 
 Setup
 -----
@@ -52,7 +52,7 @@ Setup
    except bookmarks and most recent stop.
 4. Optional: Make edits to config files (see next section)
 5. Make sure the `cache` directory is writable by your webserver
-6. Make sure your project is world-accessible.  [http://ngrok.com/](ngrok) is
+6. Make sure your project is world-accessible.  [ngrok](http://ngrok.com/) is
    great if you're working on your local machine or behind a firewall
 7. Sign up for a Twilio account and point your phone number to `main.php` in 
    the root folder, for example: http://www.example.com/twobus-phone/main.php
@@ -100,7 +100,7 @@ ToDo
 
 Copyright and License
 ---------------------
-Copyright (c) 2014 [http://github.com/cookieguru](Cookie Guru)
+Copyright (c) 2014 [Cookie Guru](http://github.com/cookieguru)
 
 This project is licensed under the The MIT License.
 
