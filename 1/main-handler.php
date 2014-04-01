@@ -9,7 +9,7 @@ echo '<Response>';
 
 $_REQUEST['Digits'] = isset($_REQUEST['Digits']) ? (int)$_REQUEST['Digits'] : -1;
 if($_REQUEST['Digits'] < 1 && !isset($_REQUEST['agency'])) {
-	echo '<Say voice="alice">That is an invalid route number.</Say>';
+	echo '<Say voice="alice">That is an invalid stop number.</Say>';
 	echo '<Say voice="alice">Goodbye</Say>';
 	echo '<Hangup/>';
 	exit('</Response>');
