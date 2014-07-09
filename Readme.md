@@ -29,8 +29,8 @@ Main Phone Tree
 
 Demo
 ----
-A live demo is running at `(312) 250-2BUS` until my server goes down or I run 
-out of credit in my Twilio Account.
+A live demo is running at `(312) 250-2BUS` until Sunday, July 20, 2014.  It will
+be canceled after that due to lack of usage.
 
 Requirements and Compatibility
 ------------------------------
