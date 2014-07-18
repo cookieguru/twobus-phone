@@ -15,7 +15,7 @@ searching; instead the user is prompted to select an agency when more than one
 exists for the given route or stop number.
 
 Main Phone Tree
-----------
+---------------
  # | Action
 ---|-------------------------------------------
 1  | Search by stop number
@@ -29,7 +29,7 @@ Main Phone Tree
 
 Demo
 ----
-A live demo is running at `(312) 250-2BUS` until Sunday, July 20, 2014.  It will
+A live demo is running at `(312) 250-2BUS` until mid-August, 2014.  It will
 be canceled after that due to lack of usage.
 
 Requirements and Compatibility
