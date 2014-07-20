@@ -13,6 +13,7 @@ last defined agency to take the given sort spot
 	<!-- The ID is the string returned by the agencies-with-coverage call -->
 	<agency id="">
 		<!-- Integer representing the order in which the agency will be read for each prompt -->
+		<!-- Currently unused -->
 		<Order></Order>
 
 		<!-- Name that will be spoken when referring to this agency -->

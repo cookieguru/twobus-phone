@@ -14,14 +14,14 @@ if($_REQUEST['Digits'] < 1) {
 	exit('</Response>');
 }
 
-$directions = get_route_stops($_REQUEST['agency'], $_REQUEST['route']);
+$directions = get_route_stops($_REQUEST['agency_route']);
 
 if(isset($directions->Direction[$_REQUEST['direction'] - 1]->stop[$_REQUEST['Digits']-10])) {
 	$stop = (explode('_', $directions->Direction[$_REQUEST['direction'] - 1]->stop[$_REQUEST['Digits']-10]->attributes()->id));
 	echo '<Redirect>' . SITE_URL . "1/main-handler.php?agency={$stop[0]}&amp;stop={$stop[1]}</Redirect>";
 } else {
 	echo "<Say voice=\"alice\">{$_REQUEST['Digits']} is not a valid selection.</Say>";
-	echo '<Redirect>' . SITE_URL . "6/direction-handler.php?agency={$_REQUEST['agency']}&amp;route={$_REQUEST['route']}&amp;Digits={$_REQUEST['Digits']}</Redirect>";
+	echo '<Redirect>' . SITE_URL . "6/direction-handler.php?agency_route={$_REQUEST['agency_route']}&amp;Digits={$_REQUEST['Digits']}</Redirect>";
 }
 
 ?>

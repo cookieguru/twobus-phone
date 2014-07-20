@@ -1,7 +1,7 @@
 <?php
 /**
  * Returns a route number formatted for TTS in a manner users expect
- * "550" becomes "5 50" which is pronounced "Five fity" instea of 
+ * "550" becomes "5 50" which is pronounced "Five fity" instead of 
  * "Five hundred fifty"
  *
  * @param mixed $route_number The route number which can be suffixed with letter(s)
@@ -73,8 +73,8 @@ function say_stop($name) {
 	' STA '  => ' Station ',
 	' Intl ' => ' International ',
 	' P&R '  => ' Park & Ride ',
-	' hwy '  => ' Highway ',  
-	' fwy '  => ' Freeway ',  
+	' hwy '  => ' Highway ',
+	' fwy '  => ' Freeway ',
 	' Frwy ' => ' Freeway ',
 	' lk '   => ' lake ',
 	];
@@ -140,7 +140,7 @@ function say_agency($name) {
 /**
  * Converts a number of seconds to a string for a text-to-speech engine.
  * Values under 60 seconds are left as-is; values between 1 minute and one
- * hour are converted to minutes; anything greater is converted to hours 
+ * hour are converted to minutes; anything greater is converted to hours
  * and minutes. Minutes use the MINUTE_PRECISION constant to determine how
  * many, if any, decimal places will be used.
  *
@@ -301,42 +301,93 @@ function get_stop_arrivals($agency, $number) {
  *
  * @return SimpleXMLElement A SimpleXMLElement representing the route list cache file
  */
-function get_route($route_number) {
+function get_routes($route_number) {
 	if(is_file(CACHE_DIR . "route_{$route_number}.xml")) {
 		if(!is_readable(CACHE_DIR . "route_{$route_number}.xml")) {
 			error_log('Cannot open ' . CACHE_DIR . "route_{$route_number}.xml");
-			return build_route_cache($stop_number);
+			return get_route_candidates($stop_number);
 		}
 		return simplexml_load_file(CACHE_DIR . "route_{$route_number}.xml");
 	} else {
-		return build_route_cache($route_number);
+		return get_route_candidates($route_number);
 	}
 }
 
 /**
- * Builds a cache file of route data.
+ * Get all routes for all agencies
  *
- * @param mixed $route_number The route number
- *
- * @return SimpleXMLElement A representation of the route data
+ * @return SimpleXMLElement A representation of all routes in the system
  */
-function build_route_cache($route_number) {
+function build_all_route_cache() {
 	$agencies = get_agency_data();
-	$temp = [];
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
+	$routes = [];
+
 	foreach($agencies->agency as $agency) {
-		if($agency->SearchRoute) {
-			curl_setopt($ch, CURLOPT_URL, API_BASE . "where/route/{$agency->attributes()->id}_{$route_number}.xml?version=2&includeReferences=false&key=" . API_KEY);
-			$temp_xml = simplexml_load_string(curl_exec($ch));
-			if((int)$temp_xml->code == 200) {
-				$temp[(string)$agency->attributes()->id] = ['name' => (string)$agency->name];
-			}
+		if(!$agency->SearchRoute)
+			continue;
+
+		curl_setopt($ch, CURLOPT_URL, API_BASE . "where/routes-for-agency/{$agency->attributes()->id}.xml?version=2&includeReferences=false&key=" . API_KEY);
+		$agency_routes = simplexml_load_string(curl_exec($ch));
+		if($agency_routes->code != 200)
+			continue;
+
+		foreach($agency_routes->data->list->route as $route) {
+			$route_data = [];
+			if(isset($route->shortName))
+				$route_data['shortName'] = $route->shortName;
+			if(isset($route->longName))
+				$route_data['longName'] = $route->longName;
+			if(isset($route->description))
+				$route_data['description'] = $route->description;
+			$routes[(string)$route->id] = $route_data;
 		}
+		$xml = new SimpleXMLElement("<?xml version=\"1.0\"?><routes></routes>");
+		_array_to_xml($routes, $xml, 'route');
 	}
 	curl_close($ch);
+
+	if(is_writable(CACHE_DIR)) {
+		file_put_contents(CACHE_DIR . "all_routes.xml", $xml->asXML());
+	} else {
+		error_log('Cache directory ' . CACHE_DIR . ' is not writable!');
+	}
+
+	return $xml;
+}
+
+/**
+ * Get all routes that match the specified $route_number. This could be the route's shortName,
+ * longName or description but NOT the id from the GTFS
+ *
+ * @param mixed $route_number The route number
+ *
+ * @return SimpleXMLElement A SimpleXMLElement with the list of routes
+ */
+function get_route_candidates($route_number) {
+	if(is_file(CACHE_DIR . "all_routes.xml")) {
+		if(!is_readable(CACHE_DIR . 'all_routes.xml')) {
+			error_log('Cannot open ' . CACHE_DIR . 'all_routes.xml');
+			$xml = build_all_route_cache();
+		}
+		$xml = simplexml_load_file(CACHE_DIR . 'all_routes.xml');
+	} else {
+		$xml = build_all_route_cache();
+	}
+
+	$route_candidates = $xml->xpath("//*[text() = '$route_number']/..");
+
+	$agencies = get_agency_data();
+
+	$temp = [];
+	foreach($route_candidates as $candidate) {
+		$agency_id = explode('_', $candidate->attributes()->id)[0];
+		$temp[$agency_id] = ['name' => $agencies->xpath("//agency[@id='$agency_id']")[0]->name, 'routeId' => $candidate->attributes()->id];
+	}
+
 
 	$xml = new SimpleXMLElement("<?xml version=\"1.0\"?><agencies></agencies>");
 	_array_to_xml($temp, $xml);
@@ -354,12 +405,12 @@ function build_route_cache($route_number) {
  * Builds a cache file of route stop list data.
  *
  * @param mixed $agency The agency operating the route
- * @param mixed $route_number The route number
+ * @param mixed $route_id The ID of the route (from GTFS)
  *
  * @return SimpleXMLElement A representation of the route stop list data
  */
-function build_route_stop_cache($agency, $route_number) {
-	$ch = curl_init(API_BASE . "where/stops-for-route/{$agency}_$route_number.xml?version=2&includePolylines=false&key=" . API_KEY);
+function build_route_stop_cache($agency_route_id) {
+	$ch = curl_init(API_BASE . "where/stops-for-route/$agency_route_id.xml?version=2&includePolylines=false&key=" . API_KEY);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	$xml = simplexml_load_string(curl_exec($ch));
 	curl_close($ch);
@@ -369,7 +420,7 @@ function build_route_stop_cache($agency, $route_number) {
 	}
 
 	$name = NULL;
-	$route_info = $xml->data->references->routes->xpath("route[id='{$agency}_$route_number']")[0];
+	$route_info = $xml->data->references->routes->xpath("route[id='$agency_route_id']")[0];
 	if(isset($route_info->longName) && !empty($route_info->longName)) {
 		$name = $route_info->longName;
 	} elseif(isset($route_info->description) && !empty($route_info->description)) {
@@ -389,7 +440,7 @@ function build_route_stop_cache($agency, $route_number) {
 	$out_xml .= '</Route>';
 
 	if(is_writable(CACHE_DIR)) {
-		file_put_contents(CACHE_DIR . "route_stops_{$agency}_{$route_number}.xml", $out_xml);
+		file_put_contents(CACHE_DIR . "route_stops_$agency_route_id.xml", $out_xml);
 	} else {
 		error_log('Cache directory ' . CACHE_DIR . ' is not writable!');
 	}
@@ -400,20 +451,19 @@ function build_route_stop_cache($agency, $route_number) {
 /**
  * Returns the local route stop list cache file or builds it if it does not exist or cannot be read
  *
- * @param mixed $agency The ID of the agency operating the route
- * @param mixed $route_number The route number
+ * @param mixed $agency_route The underscore-delimited agency/route number, e.g. 1_2 for agency 1 route ID 2
  *
  * @return SimpleXMLElement A SimpleXMLElement representing the route stop list cache file
  */
-function get_route_stops($agency, $route_number) {
-	if(is_file(CACHE_DIR . "route_stops_{$agency}_{$route_number}.xml")) {
-		if(!is_readable(CACHE_DIR . "route_stops_{$agency}_{$route_number}.xml")) {
-			error_log('Cannot open ' . CACHE_DIR . "route_stops_{$agency}_{$route_number}.xml");
-			return build_route_stop_cache($agency, $route_number);
+function get_route_stops($agency_route) {
+	if(is_file(CACHE_DIR . "route_stops_{$agency_route}.xml")) {
+		if(!is_readable(CACHE_DIR . "route_stops_{$agency_route}.xml")) {
+			error_log('Cannot open ' . CACHE_DIR . "route_stops_{$agency_route}.xml");
+			return build_route_stop_cache($agency_route);
 		}
-		return simplexml_load_file(CACHE_DIR . "route_stops_{$agency}_{$route_number}.xml");
+		return simplexml_load_file(CACHE_DIR . "route_stops_{$agency_route}.xml");
 	} else {
-		return build_route_stop_cache($agency, $route_number);
+		return build_route_stop_cache($agency_route);
 	}
 }
 
@@ -550,10 +600,10 @@ function build_agency_cache() {
 	return $xml;
 }
 
-function _array_to_xml($array, &$xml) {
+function _array_to_xml($array, &$xml, $child_name = 'agency') {
 	foreach($array as $key => $value) {
 		if(is_array($value)) {
-			$subnode = $xml->addChild('agency');
+			$subnode = $xml->addChild($child_name);
 			$subnode->addAttribute('id', $key);
 			_array_to_xml($value, $subnode);
 		} else {

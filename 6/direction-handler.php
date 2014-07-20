@@ -15,16 +15,16 @@ if($_REQUEST['Digits'] < 1) {
 }
 
 
-$directions = get_route_stops($_REQUEST['agency'], $_REQUEST['route']);
+$directions = get_route_stops($_REQUEST['agency_route']);
 
 if(!isset($directions->Direction[$_REQUEST['Digits']-1])) {
 	echo "<Say voice=\"alice\">{$_REQUEST['Digits']} is not a valid direction.</Say>";
-	echo '<Redirect>' . SITE_URL . "6/direction-handler.php?agency={$_REQUEST['agency']}&amp;route={$_REQUEST['route']}</Redirect>";
+	echo '<Redirect>' . SITE_URL . "6/direction-handler.php?agency_route={$_REQUEST['agency_route']}</Redirect>";
 	exit('</Response>');
 }
 
 $max_length = strlen(count($directions->Direction[$_REQUEST['Digits']-1]) + 10);
-echo '<Gather action="' . SITE_URL . "6/direction-index-handler.php?agency={$_REQUEST['agency']}&amp;route={$_REQUEST['route']}&amp;direction={$_REQUEST['Digits']}\" numDigits=\"$max_length\">";
+echo '<Gather action="' . SITE_URL . "6/direction-index-handler.php?agency_route={$_REQUEST['agency_route']}&amp;direction={$_REQUEST['Digits']}\" numDigits=\"$max_length\">";
 $i = 10;
 foreach($directions->Direction[$_REQUEST['Digits']-1] as $stop) {
 	echo '<Say voice="alice">For ' . say_stop($stop) . ' press ' . say_digits(str_pad($i, $max_length, '#')) . '</Say>';

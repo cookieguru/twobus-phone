@@ -27,6 +27,19 @@ Main Phone Tree
 7  | Placeholder for manage preferences
 8  | Vehicle activity
 
+Searching by stop number searches the `stop_id` column in `stops.txt` of the
+GTFS.  It uses the [stop](http://developer.onebusaway.org/modules/onebusaway-application-modules/current/api/where/methods/stop.html)
+API call.
+
+Searching by route number searches the `route_short_name`, `route_long_name`, 
+and `route_desc` from `stops.txt` of the GTFS.  There is no equivalant in the 
+OBA API; this task is performed by looking at the entire payload of each return 
+of each agency's [routes-for-agency](http://developer.onebusaway.org/modules/onebusaway-application-modules/current/api/where/methods/routes-for-agency.html)
+API call.  Alternatively, the `routes-for-location` API call could be used with 
+the `query` paramater, but it is impossible to get the user's location over the 
+phone without prompting them for their location (such as a zip code, which they 
+may not know for their current location).
+
 Demo
 ----
 A live demo is running at `(312) 250-2BUS` until mid-August, 2014.  It will
@@ -57,6 +70,11 @@ Setup
 7. Sign up for a Twilio account and point your phone number to `main.php` in 
    the root folder, for example: http://www.example.com/twobus-phone/main.php
 
+Upgrading
+---------
+Use your preferred method to copy the new code over, then clear the `cache`
+directory
+
 Config Files
 ------------
 There are three files in the `config` directory.  Each is optional but will 
@@ -80,6 +98,17 @@ engine says "S R Five Twenty" (as locals know it) instead of "Senior Five
 Hundred Twenty"
 ###stop_pronunciations.xml
 Same as `headsign_pronunciations.xml` but for stop names.
+
+Cache
+-----
+Route files are stored using the user-friendly name; not the ID number from
+the GTFS.
+Route stop files are stored using the route ID defined by the agency's GTFS.
+
+The `cache` folder should be cleared every time an agency in your region
+publishes a schedule change.  The OBA region servers do not have a mechanism
+to alert anyone of data changes, so you'll want to keep up to date by other
+means or clear the `cache` folder on a regular basis.
 
 Other Notes
 -----------
