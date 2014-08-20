@@ -42,8 +42,7 @@ may not know for their current location).
 
 Demo
 ----
-A live demo is running at `(312) 250-2BUS` until mid-August, 2014.  It will
-be canceled after that due to lack of usage.
+The demo has been canceled due to lack of usage.
 
 Requirements and Compatibility
 ------------------------------
